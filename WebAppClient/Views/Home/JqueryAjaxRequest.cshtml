@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewData["Title"] = "JqueryAjaxRequest";
+}
+
+<h1>JqueryAjaxRequest</h1>
+
+
+<button onclick="GetToken()">Get Token</button>
+<button onclick="AccessProtectedResource()">Access Resource</button>
+
+
+@section Scripts {
+
+
+
+
+
+    @* axios *@
+      <script>
+
+
+          function GetToken() {
+              var model = {
+                  email: 'test@test.com',
+                  password:'123456'
+              }
+
+
+              $.ajax({
+                  type: 'POST',
+                  url: 'https://localhost:44372/api/auth/token',
+                  data: JSON.stringify(model),
+                  contentType: "application/json",
+                  success: function (accessToken) {
+
+                      console.log('accessToken', accessToken);
+                      localStorage.setItem('token',accessToken);
+
+                      /*localStorage.removeItem('accessToken');*/
+
+                  },
+                  error: function (err) {
+                      console.log('err', err);
+                  }
+              })
+
+
+          }
+
+
+          //window.onload = function () {
+
+
+          //    fetch('https://localhost:44372/api/product', {
+          //        method: "GET"
+          //    })
+          //        .then(response => {
+          //            console.log('response', response);
+          //            return response.json()
+          //        })
+          //        .then(data => console.log('data', data));
+
+          //}
+
+
+          function AccessProtectedResource() {
+
+              const token = localStorage.getItem('token');
+
+              console.log('token', token);
+
+              $.ajax({
+                  type: 'GET',
+                  url: 'https://localhost:44372/api/resource/private',
+                  contentType: "application/json",
+                  beforeSend: function (request) {
+                      request.setRequestHeader("Authorization", `Bearer ${token}`);
+                  },
+                  success: function (response) {
+                      console.log('private-data', response);
+                  },
+                  error: function (err) {
+                      console.log('err', err);
+                  }
+              })
+          }
+
+
+
+
+          //var accessToken = localStorage.getItem("token");
+
+
+          //$(document).ready(function () {
+          //    $.ajax({
+          //        type: 'GET',
+          //        url: 'https://localhost:44372/api/product',
+          //        contentType: "application/json",
+          //        headers: {
+          //            Authorization: `Bearer ${accessToken}`
+          //        },
+          //        success: function(response) {
+          //            console.log('data', response);
+          //        },
+          //        error: function(err) {
+          //            console.log('err', err);
+          //        }
+          //    })
+          //})
+      </script>
+
+
+   
+
+
+}
+
